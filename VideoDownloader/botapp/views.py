@@ -2,7 +2,7 @@ from django.shortcuts import render
 from telegram.ext import CallbackContext
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from .models import *
-from pytube import YouTube, Stream
+from pytube import YouTube
 import os
 
 # Create your views here.
@@ -48,10 +48,11 @@ def received_message(update: Update, context: CallbackContext):
         update.message.reply_text("""🇦🇺 - Please wait..\n🇷🇺 - Пожалуйста, подождите..\n🇺🇿 - Iltimos kuting..""")
         yt = YouTube(state['link'])
         filename = yt.title
-        yt = yt.streams.get_by_itag(itag)
+        print(f"{filename}.{type}")
+        yt = yt.streams.get_by_itag(int(itag))
         yt.download(output_path='video')
         context.bot.send_video(video=open(f'video/{filename}.{type}', 'rb'), chat_id=user.id, timeout=1000)
-        # os.remove(f'video/{filename}.{type}')
+        os.remove(f'video/{filename}.{type}')
     log.log = state
     log.save()
 
